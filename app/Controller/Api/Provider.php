@@ -117,4 +117,59 @@ class Provider
         }
 
     }
+
+    /**
+     * Search for products based on a query.
+     *
+     * @param string $query The search query.
+     *
+     * @return void
+     */
+    public function searchProducts()
+    {
+        // Securely get the query parameter
+        // $query = $_GET['q'] ?? '';
+        $query = filter_input(INPUT_GET, 'q', FILTER_DEFAULT);
+        $limit = filter_input(INPUT_GET, 'limit', FILTER_UNSAFE_RAW) ?? 10;
+        $skip = filter_input(INPUT_GET, 'skip', FILTER_UNSAFE_RAW) ?? 0;
+
+        if ($query === null) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Query parameter is missing']);
+            return;
+        }
+
+        // Build query parameters
+        $queryParams = [
+            'q' => $query,
+            'limit' => $limit,
+            'skip'  => $skip,
+        ];
+
+        try {
+            // Send API request
+            $response = $this->client->request('GET', 'search', ['query' => $queryParams]);
+
+            // Decode JSON response
+            $data = json_decode($response->getBody(), true);
+
+            // Check if API returned products
+            if (!isset($data['products'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Invalid API response']);
+                return;
+            }
+
+            // Parse and return formatted response
+            $result = Parser::parseProducts($data['products'], $data['total'], $limit, $skip);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            return;
+
+        } catch (RequestException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'API Request Failed: ' . $e->getMessage()]);
+            return;
+        }
+    }
 }

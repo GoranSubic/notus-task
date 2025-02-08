@@ -15,6 +15,8 @@ $router->get('/', function () {
 
 $router->get('/product/{id}', Provider::class . '@getProduct');
 
+$router->get('/products/search', Provider::class . '@searchProducts');
+
 $router->get('/products(/\d+)?(/\d+)?(/[a-z]+)?(/(?:asc|desc))?', Provider::class . '@getProducts');
 
 // Run it!
