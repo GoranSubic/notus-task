@@ -22,6 +22,66 @@ class Provider
     }
 
     /**
+     * Fetch and parse products with pagination and sorting.
+     *
+     * @param int|null $limit  Number of products per page
+     * @param int      $skip   Number  of products to skip (pagination)
+     * @param string   $sortBy Field to sort by (e.g., 'price', 'title')
+     * @param string   $order  Sorting order ('asc' or 'desc')
+     *
+     * @return array Formatted response
+     */
+    public function getProducts($limit = null, $skip = null, $sortBy = null, $order = null)
+    {
+        $limit = $limit ?? 10;
+        $skip = $skip ?? 0;
+        $sortBy = $sortBy ?? 'id';
+        $order = $order ?? 'asc';
+
+        // Build query parameters
+        $queryParams = [
+            'limit' => $limit,
+            'skip'  => $skip,
+        ];
+
+        try {
+            // Send API request
+            $response = $this->client->request('GET', '', ['query' => $queryParams]);
+
+            // Decode JSON response
+            $data = json_decode($response->getBody(), true);
+
+            // Check if API returned products
+            if (!isset($data['products']) || !isset($data['total'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Invalid API response']);
+                return;
+            }
+
+            // Sort results locally if sorting is needed
+            if ($sortBy && isset($data['products'][0][$sortBy])) {
+                usort(
+                    $data['products'],
+                    function ($a, $b) use ($sortBy, $order) {
+                        return $order === 'asc' ? $a[$sortBy] <=> $b[$sortBy] : $b[$sortBy] <=> $a[$sortBy];
+                    }
+                );
+            }
+
+            // Parse and return formatted response
+            $result = Parser::parseProducts($data['products'], $data['total'], $limit, $skip);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            return;
+
+        } catch (RequestException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'API Request Failed: ' . $e->getMessage()]);
+            return;
+        }
+    }
+
+    /**
      * Retrieves the product details based on the provided product ID.
      *
      * @param int $id The ID of the product to retrieve.
