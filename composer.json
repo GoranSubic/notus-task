@@ -1,0 +1,7 @@
+{
+    "require": {
+        "php": ">=7.4",
+        "bramus/router": "~1.6",
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}
