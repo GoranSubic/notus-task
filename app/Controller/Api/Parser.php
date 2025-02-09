@@ -7,7 +7,11 @@ namespace App\Controller\Api;
  *
  * This class is responsible for parsing data within the application.
  *
- * @package App\Controller\Api
+ * @category Controller
+ * @package  App\Controller\Api
+ * @author   Goran Subic <gsubic@gmail.com>
+ * @license  http://opensource.org/licenses/MIT MIT License
+ * @link     goransubic.vercel.app
  */
 class Parser
 {

@@ -6,6 +6,17 @@ use App\Controller\Api\Parser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
+/**
+ * Class Provider
+ *
+ * This class handles the API requests related to providers.
+ *
+ * @category Controller
+ * @package  App\Controller\Api
+ * @author   Goran Subic <gsubic@gmail.com>
+ * @license  http://opensource.org/licenses/MIT MIT License
+ * @link     goransubic.vercel.app
+ */
 class Provider
 {
     private $apiUrl = "https://dummyjson.com/products/";
@@ -31,7 +42,7 @@ class Provider
      *
      * @return array Formatted response
      */
-    public function getProducts(int $limit = null, int $skip = null, string $sortBy = null, string $order = null)
+    public function getProducts(?int $limit, ?int $skip, ?string $sortBy, ?string $order)
     {
         $limit = $limit ?? 10;
         $skip = $skip ?? 0;
@@ -88,8 +99,15 @@ class Provider
      * 
      * @return mixed The product details or null if not found.
      */
-    public function getProduct(int $id)
+    public function getProduct($id)
     {
+        // Check if the provided ID is numeric
+        if (!is_numeric($id)) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Invalid product ID']);
+            return;
+        }
+
         try {
             // Send API request
             $response = $this->client->request('GET', $this->apiUrl . $id);
@@ -129,13 +147,25 @@ class Provider
     {
         // Securely get the query parameter
         // $query = $_GET['q'] ?? '';
-        $query = filter_input(INPUT_GET, 'q', FILTER_DEFAULT);
-        $limit = filter_input(INPUT_GET, 'limit', FILTER_UNSAFE_RAW) ?? 10;
-        $skip = filter_input(INPUT_GET, 'skip', FILTER_UNSAFE_RAW) ?? 0;
+        $query = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_SPECIAL_CHARS);
+        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT, ['options' => ['default' => 10, 'min_range' => 1]]);
+        $skip = filter_input(INPUT_GET, 'skip', FILTER_VALIDATE_INT, ['options' => ['default' => 0, 'min_range' => 0]]);
 
         if ($query === null) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Query parameter is missing']);
+            return;
+        }
+
+        if (!is_numeric($limit) || $limit < 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Invalid limit parameter']);
+            return;
+        }
+
+        if (!is_numeric($skip) || $skip < 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Invalid skip parameter']);
             return;
         }
 
