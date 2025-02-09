@@ -10,7 +10,8 @@ $router = new \Bramus\Router\Router();
 
 // Define routes
 $router->get('/', function () {
-    echo 'Test';
+    $template = file_get_contents(__DIR__ . '/templates/home.tpl');
+    echo $template;
 });
 
 $router->get('/product/{id}', Provider::class . '@getProduct');

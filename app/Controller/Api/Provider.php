@@ -24,14 +24,14 @@ class Provider
     /**
      * Fetch and parse products with pagination and sorting.
      *
-     * @param int|null $limit  Number of products per page
-     * @param int      $skip   Number  of products to skip (pagination)
-     * @param string   $sortBy Field to sort by (e.g., 'price', 'title')
-     * @param string   $order  Sorting order ('asc' or 'desc')
+     * @param int|null    $limit  Number of products per page
+     * @param int|null    $skip   Number  of products to skip (pagination)
+     * @param string|null $sortBy Field to sort by (e.g., 'price', 'title')
+     * @param string|null $order  Sorting order ('asc' or 'desc')
      *
      * @return array Formatted response
      */
-    public function getProducts($limit = null, $skip = null, $sortBy = null, $order = null)
+    public function getProducts(int $limit = null, int $skip = null, string $sortBy = null, string $order = null)
     {
         $limit = $limit ?? 10;
         $skip = $skip ?? 0;
@@ -88,7 +88,7 @@ class Provider
      * 
      * @return mixed The product details or null if not found.
      */
-    public function getProduct($id)
+    public function getProduct(int $id)
     {
         try {
             // Send API request
