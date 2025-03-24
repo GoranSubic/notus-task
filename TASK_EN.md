@@ -52,7 +52,3 @@
 - All of the methods from the providers need to be accessible from a `Controller` and GET routes need to be ccreated
   - A [router](https://github.com/bramus/router) is setup
   - A http client (guzzle) is also inside the composer for API requests
-
-A solution needs to be on a source control platform (preferably GitHub) and shared it with us "robert.jarec@notus.hr".
-
-A deadline for the solution is 4 days from the day after we send the task.
