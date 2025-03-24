@@ -52,7 +52,3 @@
 - Za sve kreirane metode iz providera potrebno je napraviti Rute kroz koje se mogu dohvatiti sve navedene stvari kroz GET zahtjeve - poželjno napraviti metode koje se pozivaju u routeru kroz `Controller`
   - Postavljen je [router](https://github.com/bramus/router)
   - Također je u composeru postavljen i guzzle kao alat za requestove
-
-Rješenje je potrebno postaviti na source control platform (poželjno GitHub) te podijeliti sa "robert.jarec@notus.hr"
-
-Rok za rješenje je 4 dana od dana nakon što pošaljemo zadatak.
